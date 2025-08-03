@@ -2,9 +2,24 @@
 
 Una aplicación de clima simple y bonita para Android.
 
+Actualizado: 03/08/2025
+
 ## Descripción
 
 Weather App proporciona información meteorológica en tiempo real para tu ubicación actual y cualquier otra ciudad del mundo. Con una interfaz de usuario limpia e intuitiva, puedes obtener fácilmente el pronóstico del tiempo para los próximos días.
+
+## Avances recientes (03/08/2025)
+
+- Migración de dibujo en la brújula de viento a un enfoque 100% Compose (sin nativeCanvas), mejorando compatibilidad entre versiones de Compose y evitando errores de compilación.
+- Corrección de incompatibilidades con Material3 y Navigation:
+  - Uso de `FilterChipDefaults.filterChipColors()` compatible con la versión actual.
+  - Sustitución de `android.graphics.Path` por `androidx.compose.ui.graphics.Path` en gráficos.
+  - Reemplazo de color no definido (AccentRain) por un valor fijo.
+- Actualización del stack de build:
+  - Kotlin 2.0.20 + plugin Compose activo.
+  - AGP 8.5.0 y BOM Compose 2024.08.00.
+  - JDK 17 configurado para compilación.
+- Limpieza y estabilidad: proyecto compila y se empaqueta (`assembleDebug`) correctamente.
 
 ## Características
 
@@ -14,7 +29,6 @@ Weather App proporciona información meteorológica en tiempo real para tu ubica
 *   **Búsqueda de Ciudades:** Encuentra información del tiempo para cualquier ciudad del mundo.
 *   **Guardar Ubicaciones:** Guarda tus ubicaciones favoritas para un acceso rápido.
 *   **Interfaz de Usuario Limpia:** Interfaz estéticamente agradable y fácil de usar.
-
 
 ## Tecnologías Utilizadas
 
@@ -65,4 +79,3 @@ Weather App proporciona información meteorológica en tiempo real para tu ubica
 ## Licencia
 
 Este proyecto está licenciado bajo la Licencia MIT - mira el archivo `LICENSE` para más detalles.
-

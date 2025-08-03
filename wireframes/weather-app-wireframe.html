@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="light-content">
+    <title>Minimal Weather - Wireframe</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #d6e6f2 0%, #f5e9f0 100%);
+            min-height: 100vh;
+            display: flex;
+            color: #4a5568;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+        }
+
+        /* Container for max-width and centering */
+        .container {
+            max-width: none;
+            width: 100%;
+            padding: 40px 0;
+            display: flex;
+            flex-direction: row;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 40px;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+
+        /* Header styles */
+        header {
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .app-title {
+            font-size: 28px;
+            font-weight: 300;
+            color: #5a4b6e;
+            letter-spacing: 0.5px;
+        }
+
+        /* Main content card */
+        main {
+            background: rgba(255, 250, 253, 0.9);
+            border-radius: 24px;
+            padding: 32px 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 250, 253, 0.2);
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        /* Screen-specific adjustments for iPhone 15 Pro Max */
+        .screen {
+            width: 428px;
+            min-width: 428px;
+            min-height: 926px; /* iPhone 15 Pro Max height */
+            flex-shrink: 0;
+            scroll-snap-align: center;
+            background: linear-gradient(180deg, rgba(255, 250, 253, 0.95) 0%, rgba(240, 235, 245, 0.95) 100%);
+            border-radius: 36px;
+            padding: 48px 28px;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 250, 253, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .screen.active {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Current weather section */
+        .current-weather {
+            text-align: center;
+            padding: 32px;
+            background: linear-gradient(135deg, rgba(240, 235, 245, 0.6) 0%, rgba(255, 250, 253, 0.6) 100%);
+            border-radius: 28px;
+            margin-bottom: 32px;
+        }
+
+        .date {
+            font-size: 16px;
+            color: #8c8ca1;
+            margin-bottom: 8px;
+            font-weight: 400;
+        }
+
+        .temperature-wrapper {
+            position: relative;
+            display: inline-block;
+            margin: 16px 0;
+            min-height: 80px;
+            width: 100px;
+            height: 100px;
+        }
+
+        .temperature {
+            font-size: 64px;
+            font-weight: 200;
+            color: #4a5568;
+            line-height: 1;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+        }
+
+        .current-weather-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 120px;
+            opacity: 0.2;
+            pointer-events: none;
+            z-index: 1;
+            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.1));
+        }
+
+        .current-weather-icon-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90px;
+            height: 90px;
+            background: rgba(240, 235, 245, 0.3);
+            border-radius: 50%;
+            z-index: 2;
+            filter: blur(5px);
+        }
+
+        .condition {
+            font-size: 20px;
+            color: #5a4b6e;
+            margin-bottom: 8px;
+            font-weight: 300;
+        }
+
+        .location {
+            font-size: 16px;
+            color: #8c8ca1;
+            font-weight: 400;
+        }
+
+        /* Forecast section */
+        .forecast {
+            border-top: 1px solid rgba(200, 190, 210, 0.3);
+            padding-top: 24px;
+        }
+
+        .forecast-title {
+            font-size: 18px;
+            color: #5a4b6e;
+            margin-bottom: 16px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .forecast-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .forecast-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(240, 235, 245, 0.5);
+            border-radius: 12px;
+            transition: background-color 0.2s ease;
+        }
+
+        .forecast-item:hover {
+            background: rgba(240, 235, 245, 0.8);
+        }
+
+        .forecast-day {
+            font-size: 16px;
+            color: #5a4b6e;
+            font-weight: 500;
+            min-width: 80px;
+        }
+
+        .forecast-icon {
+            font-size: 20px;
+            margin: 0 12px;
+        }
+
+        .forecast-temps {
+            font-size: 16px;
+            color: #4a5568;
+            font-weight: 400;
+            text-align: right;
+        }
+
+        .temp-high {
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .temp-low {
+            color: #8c8ca1;
+            margin-left: 8px;
+        }
+
+        /* Footer with mock data label */
+        footer {
+            text-align: center;
+            padding: 16px 0;
+            margin-top: 24px;
+        }
+
+        .mock-label {
+            font-size: 12px;
+            color: #a0aec0;
+            background: rgba(255, 250, 253, 0.8);
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            border: 1px solid rgba(200, 190, 210, 0.3);
+        }
+
+        /* Screen navigation */
+        .nav-tabs {
+            display: none; /* Hide navigation for oversight view */
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 14px 0;
+            background: rgba(255, 250, 253, 0.6);
+            color: #8c8ca1;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            min-height: 50px;
+        }
+
+        .nav-tab.active {
+            background: rgba(255, 250, 253, 0.95);
+            color: #5a4b6e;
+            box-shadow: inset 0 -3px 0 #5a4b6e;
+        }
+
+        /* Detailed Weather Screen Styles - iPhone 15 Pro Max Optimized */
+        .hourly-forecast {
+            margin-bottom: 32px;
+        }
+
+        .hourly-title {
+            font-size: 20px;
+            color: #5a4b6e;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-left: 4px;
+        }
+
+        .hourly-scroll {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding: 12px 0 16px 0;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            scroll-snap-type: x mandatory;
+        }
+
+        .hourly-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hourly-item {
+            min-width: 90px;
+            text-align: center;
+            padding: 20px 16px;
+            background: rgba(240, 235, 245, 0.6);
+            border-radius: 20px;
+            border: 1px solid rgba(200, 190, 210, 0.25);
+            scroll-snap-align: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .hourly-item:first-child {
+            background: rgba(255, 250, 253, 0.8);
+            border-color: rgba(200, 190, 210, 0.4);
+        }
+
+        .hourly-time {
+            font-size: 13px;
+            color: #8c8ca1;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .hourly-icon {
+            font-size: 28px;
+            margin: 12px 0;
+            line-height: 1;
+        }
+
+        .hourly-temp {
+            font-size: 17px;
+            color: #4a5568;
+            font-weight: 600;
+        }
+
+        .weather-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 8px;
+        }
+
+        .detail-card {
+            background: rgba(240, 235, 245, 0.6);
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(200, 190, 210, 0.25);
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            min-height: 90px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .detail-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .detail-title {
+            font-size: 13px;
+            color: #8c8ca1;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .detail-value {
+            font-size: 24px;
+            color: #4a5568;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        .detail-subtitle {
+            font-size: 13px;
+            color: #8c8ca1;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        /* Settings Screen Styles - iPhone 15 Pro Max Optimized */
+        .settings-group {
+            margin-bottom: 32px;
+        }
+
+        .settings-group-title {
+            font-size: 18px;
+            color: #5a4b6e;
+            font-weight: 600;
+            margin-bottom: 16px;
+            padding-left: 8px;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(240, 235, 245, 0.6);
+            border-radius: 16px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(200, 190, 210, 0.25);
+            transition: all 0.2s ease;
+            min-height: 60px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .setting-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .setting-label {
+            font-size: 17px;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .setting-value {
+            font-size: 15px;
+            color: #8c8ca1;
+            background: rgba(255, 250, 253, 0.9);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(200, 190, 210, 0.3);
+            font-weight: 500;
+        }
+
+        .toggle-switch {
+            width: 50px;
+            height: 28px;
+            background: rgba(200, 190, 210, 0.4);
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(200, 190, 210, 0.3);
+        }
+
+        .toggle-switch.on {
+            background: #5a4b6e;
+            border-color: #5a4b6e;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 11px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch.on::after {
+            transform: translateX(22px);
+        }
+
+        /* iPhone 15 Pro Max specific optimizations */
+        @media (max-width: 428px) and (min-width: 415px) {
+            .container {
+                padding: 24px 20px;
+                padding-top: max(24px, env(safe-area-inset-top) + 10px);
+                padding-bottom: max(24px, env(safe-area-inset-bottom) + 10px);
+            }
+
+            .nav-tabs {
+                margin-bottom: 32px;
+                gap: 0;
+            }
+
+            .hourly-scroll {
+                gap: 24px;
+                padding: 16px 0 20px 0;
+            }
+
+            .hourly-item {
+                min-width: 95px;
+                padding: 24px 18px;
+            }
+
+            .weather-details {
+                gap: 24px;
+            }
+
+            .detail-card {
+                padding: 24px;
+                min-height: 100px;
+            }
+
+            .setting-item {
+                padding: 24px;
+                min-height: 70px;
+            }
+        }
+
+        /* Smaller iPhone adjustments */
+        @media (max-width: 414px) {
+            .container {
+                padding: 16px;
+                gap: 20px;
+                padding-top: max(16px, env(safe-area-inset-top) + 8px);
+                padding-bottom: max(16px, env(safe-area-inset-bottom) + 8px);
+            }
+
+            main {
+                padding: 24px 20px;
+            }
+
+            .temperature {
+                font-size: 56px;
+            }
+
+            .app-title {
+                font-size: 24px;
+            }
+
+            .current-weather-icon {
+                font-size: 100px;
+            }
+
+            .temperature-wrapper {
+                width: 80px;
+                height: 80px;
+            }
+
+            .nav-tabs {
+                gap: 0;
+                margin-bottom: 20px;
+            }
+
+            .nav-tab {
+                padding: 10px 16px;
+                font-size: 14px;
+                min-height: 40px;
+            }
+
+            .weather-details {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .detail-card {
+                padding: 16px;
+                min-height: 80px;
+            }
+
+            .setting-item {
+                padding: 16px;
+                min-height: 56px;
+            }
+
+            .hourly-item {
+                min-width: 75px;
+                padding: 16px 12px;
+            }
+
+            .hourly-scroll {
+                gap: 16px;
+            }
+
+            .settings-group-title {
+                font-size: 17px;
+            }
+
+            .setting-label {
+                font-size: 16px;
+            }
+
+            .toggle-switch {
+                width: 46px;
+                height: 26px;
+            }
+
+            .toggle-switch::after {
+                width: 20px;
+                height: 20px;
+                top: 3px;
+                left: 3px;
+            }
+
+            .toggle-switch.on::after {
+                transform: translateX(20px);
+            }
+        }
+
+        @media (min-width: 769px) {
+            body {
+                justify-content: center;
+                align-items: center;
+                padding: 40px;
+            }
+
+            .container {
+                justify-content: center;
+            }
+        }
+
+        /* Oversight View Styles */
+        .screen {
+            display: block;
+            margin-bottom: 48px;
+            border-bottom: 1px solid rgba(200, 190, 210, 0.3);
+            padding-bottom: 32px;
+        }
+
+        .overview-heading {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            margin: -32px -24px 24px -24px;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            padding: 20px;
+            background: rgba(255, 250, 253, 0.95);
+        }
+
+        /* Consistent section styling */
+        section {
+            margin-bottom: 32px;
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        h2 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #5a4b6e;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Improve current weather consistency */
+        .current-weather {
+            text-align: center;
+            padding: 32px;
+            background: linear-gradient(135deg, rgba(240, 235, 245, 0.6) 0%, rgba(255, 250, 253, 0.6) 100%);
+            border-radius: 28px;
+            margin-bottom: 32px;
+        }
+
+        /* Enhanced forecast items */
+        .forecast-item, .hourly-item, .detail-card, .setting-item {
+            border-radius: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .forecast-item:hover, .hourly-item:hover, .detail-card:hover, .setting-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Better color contrast */
+        .temp-high, .detail-value, .setting-label {
+            color: #4a3b5c;
+        }
+
+        .temp-low, .detail-subtitle, .setting-value {
+            color: #7a7a8f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="app-title">Minimal Weather</h1>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="nav-tabs">
+            <div class="nav-tab active" onclick="showScreen('main')">Inicio</div>
+            <div class="nav-tab" onclick="showScreen('details')">Detalles</div>
+            <div class="nav-tab" onclick="showScreen('settings')">Ajustes</div>
+        </nav>
+
+        <!-- Oversight View: All Screens Displayed Sequentially -->
+
+        <main class="screen" id="main-screen">
+            <h2 class="overview-heading">Pantalla Principal</h2>
+            <section class="current-weather">
+                <div class="date">Jueves, 17 de Julio de 2025</div>
+                <div class="temperature-wrapper">
+                    <div class="temperature">24°</div>
+                    <span class="current-weather-icon-bg"></span>
+                    <span class="current-weather-icon">🌤</span>
+                </div>
+                <div class="condition">Parcialmente Nublado</div>
+                <div class="location">Las Palmas de Gran Canaria, España</div>
+            </section>
+
+            <section class="forecast">
+                <h2 class="forecast-title">Pronóstico a 3 Días</h2>
+                <div class="forecast-list">
+                    <div class="forecast-item">
+                        <span class="forecast-day">Viernes</span>
+                        <span class="forecast-icon">🌤</span>
+                        <div class="forecast-temps">
+                            <span class="temp-high">26°</span>
+                            <span class="temp-low">18°</span>
+                        </div>
+                    </div>
+                    <div class="forecast-item">
+                        <span class="forecast-day">Sábado</span>
+                        <span class="forecast-icon">🌧</span>
+                        <div class="forecast-temps">
+                            <span class="temp-high">22°</span>
+                            <span class="temp-low">17°</span>
+                        </div>
+                    </div>
+                    <div class="forecast-item">
+                        <span class="forecast-day">Domingo</span>
+                        <span class="forecast-icon">☀️</span>
+                        <div class="forecast-temps">
+                            <span class="temp-high">27°</span>
+                            <span class="temp-low">19°</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <main class="screen" id="details-screen">
+            <h2 class="overview-heading">Pantalla de Detalles</h2>
+            <section class="current-weather">
+                <div class="date">Jueves, 17 de Julio de 2025</div>
+                <div class="temperature-wrapper">
+                    <div class="temperature">24°</div>
+                    <span class="current-weather-icon-bg"></span>
+                    <span class="current-weather-icon">🌤</span>
+                </div>
+                <div class="condition">Parcialmente Nublado</div>
+                <div class="location">Las Palmas de Gran Canaria, España</div>
+            </section>
+
+            <section class="hourly-forecast">
+                <h2 class="hourly-title">Pronóstico por Horas</h2>
+                <div class="hourly-scroll">
+                    <div class="hourly-item">
+                        <div class="hourly-time">Ahora</div>
+                        <div class="hourly-icon">🌤</div>
+                        <div class="hourly-temp">24°</div>
+                    </div>
+                    <div class="hourly-item">
+                        <div class="hourly-time">15:00</div>
+                        <div class="hourly-icon">🌤</div>
+                        <div class="hourly-temp">26°</div>
+                    </div>
+                    <div class="hourly-item">
+                        <div class="hourly-time">16:00</div>
+                        <div class="hourly-icon">☀️</div>
+                        <div class="hourly-temp">27°</div>
+                    </div>
+                    <div class="hourly-item">
+                        <div class="hourly-time">17:00</div>
+                        <div class="hourly-icon">☀️</div>
+                        <div class="hourly-temp">26°</div>
+                    </div>
+                    <div class="hourly-item">
+                        <div class="hourly-time">18:00</div>
+                        <div class="hourly-icon">🌤</div>
+                        <div class="hourly-temp">25°</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="weather-details">
+                <div class="detail-card">
+                    <div class="detail-title">Humedad</div>
+                    <div class="detail-value">68%</div>
+                    <div class="detail-subtitle">Punto de rocío: 18°</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-title">Viento</div>
+                    <div class="detail-value">12 km/h</div>
+                    <div class="detail-subtitle">Dirección: NE</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-title">Índice UV</div>
+                    <div class="detail-value">6</div>
+                    <div class="detail-subtitle">Alto</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-title">Presión</div>
+                    <div class="detail-value">1013</div>
+                    <div class="detail-subtitle">hPa</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-title">Visibilidad</div>
+                    <div class="detail-value">10 km</div>
+                    <div class="detail-subtitle">Perfecta</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-title">Sensación</div>
+                    <div class="detail-value">26°</div>
+                    <div class="detail-subtitle">Como se siente</div>
+                </div>
+            </section>
+        </main>
+
+        <main class="screen" id="settings-screen">
+            <h2 class="overview-heading">Pantalla de Ajustes</h2>
+            <section class="settings-group">
+                <h2 class="settings-group-title">Unidades</h2>
+                <div class="setting-item">
+                    <span class="setting-label">Temperatura</span>
+                    <span class="setting-value">Celsius (°C)</span>
+                </div>
+                <div class="setting-item">
+                    <span class="setting-label">Velocidad del Viento</span>
+                    <span class="setting-value">km/h</span>
+                </div>
+                <div class="setting-item">
+                    <span class="setting-label">Presión</span>
+                    <span class="setting-value">hPa</span>
+                </div>
+            </section>
+
+            <section class="settings-group">
+                <h2 class="settings-group-title">Ubicación</h2>
+                <div class="setting-item">
+                    <span class="setting-label">Ubicación Actual</span>
+                    <span class="setting-value">Las Palmas, España</span>
+                </div>
+                <div class="setting-item">
+                    <span class="setting-label">GPS Automático</span>
+                    <div class="toggle-switch on"></div>
+                </div>
+            </section>
+
+            <section class="settings-group">
+                <h2 class="settings-group-title">Notificaciones</h2>
+                <div class="setting-item">
+                    <span class="setting-label">Alertas Meteorológicas</span>
+                    <div class="toggle-switch on"></div>
+                </div>
+                <div class="setting-item">
+                    <span class="setting-label">Pronóstico Diario</span>
+                    <div class="toggle-switch"></div>
+                </div>
+                <div class="setting-item">
+                    <span class="setting-label">Lluvia Próxima</span>
+                    <div class="toggle-switch on"></div>
+                </div>
+            </section>
+
+            <section class="settings-group">
+                <h2 class="settings-group-title">Apariencia</h2>
+                <div class="setting-item">
+                    <span class="setting-label">Tema</span>
+                    <span class="setting-value">Automático</span>
+                </div>
+                <div class="setting-item">
+                    <span class="setting-label">Iconos Animados</span>
+                    <div class="toggle-switch"></div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="mock-label">🔧 WIREFRAME - MOCK DATA</div>
+        </footer>
+    </div>
+
+    <!-- Remove JavaScript as no longer needed for oversight view -->
+    <!-- <script> ... </script> -->
+</body>
+</html> 

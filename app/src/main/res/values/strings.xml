@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">Minimal Weather</string>
+
+    <!-- Bottom navigation labels -->
+    <string name="tab_inicio">Inicio</string>
+    <string name="tab_detalles">Detalles</string>
+    <string name="tab_ajustes">Ajustes</string>
 </resources>
